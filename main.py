@@ -1,18 +1,17 @@
 import streamlit as st
 import plotly.express as px
 import plotly.figure_factory as ff
-
+from PIL import Image
 import numpy as np
 import pandas as pd
 import datetime
 import math
 
+holland_logo = Image.open('./images/holland.png')
+st.image(holland_logo, width=300)
 
-st.markdown("# Microver :train2:")
-st.write("Load your data for visualization")
-
-
-uploaded_files = st.file_uploader("Choose a CSV file", accept_multiple_files=True)
+st.text("")
+uploaded_files = st.file_uploader("Load a CSV file for visualization", accept_multiple_files=True)
 for uploaded_file in uploaded_files:
     try:
         data = pd.read_csv(uploaded_file)
@@ -65,18 +64,13 @@ for uploaded_file in uploaded_files:
 
                 counter += 1
 
-
         data['Status Byte'] = data['Status Byte'].astype(str)
 
-
         tab1, tab2 = st.tabs(["Speed Over Time", "Distance Over Time"])
-
-
 
         fig = px.scatter(data,
                          x='Timestamp',
                          y='Speed',
-                         color='Status Byte',
                          hover_data=['Status Byte'],
                          labels={
                              "Speed": "Speed (km/h)",
@@ -91,7 +85,6 @@ for uploaded_file in uploaded_files:
             fig = px.scatter(data,
                              x='Timestamp',
                              y='Distance',
-                             color='Status Byte',
                              hover_data=['Status Byte'],
                              labels={
                                  "Distance": "Distance (meter)",
