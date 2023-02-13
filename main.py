@@ -11,6 +11,7 @@ st.set_page_config(layout="wide")
 
 st.markdown( f"""
 <style>
+    #MainMenu {{visibility: hidden;}}
 	.css-1dp5vir {{
     position: absolute;
     top: 0px;
@@ -29,6 +30,7 @@ st.markdown( f"""
 holland_logo = Image.open('./images/holland.png')
 
 st.image(holland_logo, width=350)
+st.markdown("**_Deuta Radar Post-processing Tool_**")
 
 st.text("")
 drs05_tab, dr42_tab = st.tabs(["DRS05", "DR42"])
