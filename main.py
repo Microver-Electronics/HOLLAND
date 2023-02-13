@@ -20,13 +20,6 @@ st.markdown( f"""
     background-image: linear-gradient(90deg, rgba(40,94,174,255), rgba(20,190,241,255));
     z-index: 999990;
 }}
-.st-c7 {{
-    color: rgb(39, 94, 170);
-}}
-
-.st-cp:hover {{
-    color: rgb(39, 94, 170);
-}}
 </style>
 """, unsafe_allow_html=True)
 
