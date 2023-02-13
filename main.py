@@ -7,7 +7,7 @@ import pandas as pd
 import datetime
 import math
 
-st.set_page_config(layout="wide")
+# st.set_page_config(layout="wide")
 
 st.markdown( f"""
 <style>
