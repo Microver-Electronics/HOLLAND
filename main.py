@@ -38,7 +38,7 @@ st.markdown( f"""
 """, unsafe_allow_html=True)
 
 
-holland_logo = Image.open('./images/holland-whitetext.png')
+holland_logo = Image.open('./images/holland.png')
 
 
 st.image(holland_logo, width=350)
