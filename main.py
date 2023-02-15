@@ -312,6 +312,3 @@ with dr42_tab:
         except:
             st.write("PLEASE LOAD A DR42 OR DR8 CSV FILE")
             pass
-
-if st.button(":repeat: Clear Window"):
-    pyautogui.hotkey("ctrl", "F5")
