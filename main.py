@@ -38,7 +38,7 @@ st.markdown( f"""
 """, unsafe_allow_html=True)
 
 
-holland_logo = Image.open('./images/holland.png')
+holland_logo = Image.open('./images/holland-whitetext.png')
 
 
 st.image(holland_logo, width=350)
@@ -196,6 +196,7 @@ with dr42_tab:
                 data["Speed"] = 0
                 data["Distance"] = 0
                 data["Status Byte"] = 0
+                data["RMS"] = 0
                 data["Data State"] = "Fine"
 
                 for i in range(len(data)):
@@ -222,6 +223,11 @@ with dr42_tab:
                         res = bStr
 
                         data["Status Byte"][i] = "0x" + data["Radar Message"][i][23:25] + ", " + "0b" + res
+
+                        rms = data["Radar Message"][i][17:21]
+                        rms = int(rms, base=16)
+
+                        data["RMS"][i] = rms
                     except:
                         pass
 
@@ -245,7 +251,7 @@ with dr42_tab:
 
 
 
-                speed_tab, distance_tab = st.tabs(["Speed Over Time", "Distance Over Time"])
+                speed_tab, distance_tab, rms_tab = st.tabs(["Speed Over Time", "Distance Over Time", "RMS"])
 
                 data.loc[data['Radar Message'].str.len() != 27, 'Data State'] = 'Incorrect'
                 data_corrupt = data[data['Radar Message'].str.len() != 27]
@@ -304,6 +310,30 @@ with dr42_tab:
 
                 data_first_dr42 = data_first_dr42.style.applymap(corrupt_data_drs42, props='background-color:#800000;', subset=["Radar Message"])
                 st.dataframe(data_first_dr42, use_container_width=True)
+
+                with rms_tab:
+                    fine_x = [xi for xi, s in zip(data["Timestamp"], data["Data State"]) if s == "Fine"]
+                    fine_y = [yi for yi, s in zip(data["RMS"], data["Data State"]) if s == "Fine"]
+                    incorrect_x = [xi for xi, s in zip(data["Timestamp"], data["Data State"]) if s == "Incorrect"]
+                    incorrect_y = [yi for yi, s in zip(data["RMS"], data["Data State"]) if s == "Incorrect"]
+
+                    fig = go.Figure()
+                    fig.add_trace(go.Scatter(x=fine_x, y=fine_y, mode="lines", name="Fine", hoverinfo='text',
+                                             text=["Status Byte: {}<br>RMS: {}<br>Timestamp: {}".format(sb, rms, ts)
+                                                   for sb, rms, ts in
+                                                   zip(data_correct["Status Byte"], (data_correct["RMS"]),
+                                                       data_correct["Timestamp"])]))
+                    fig.add_trace(go.Scatter(x=incorrect_x, y=incorrect_y, mode="markers", name="Incorrect",
+                                             line=dict(color="red"), hoverinfo='text',
+                                             text=["Timestamp: {}<br>Radar Message: {}".format(tm, rm) for tm, rm in
+                                                   zip(data_corrupt["Timestamp"], data_corrupt["Radar Message"])]))
+
+                    fig.update_layout(
+                        xaxis_title='Date',
+                        yaxis_title='RMS'
+                    )
+
+                    st.plotly_chart(fig, use_container_width=True)
 
             else:
                 st.write("PLEASE LOAD A DR42 OR DR8 CSV FILE")
