@@ -7,7 +7,6 @@ import pandas as pd
 import datetime
 import math
 from streamlit.components.v1 import html
-import pyautogui
 import plotly.graph_objects as go
 
 st.set_page_config(layout="wide")
