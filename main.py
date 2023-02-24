@@ -286,8 +286,8 @@ with dr42_tab:
                 speed_tab, distance_tab, rms_tab = st.tabs(["Speed Over Time", "Distance Over Time", "RMS"])
 
                 data.loc[(data['Radar Message'].str.len() != 27) | (data['Masked Status Byte'] == 0), 'Data State'] = 'Incorrect'
-                data_corrupt = data[data['Radar Message'].str.len() != 27]
-                data_correct = data[data['Radar Message'].str.len() == 27]
+                data_corrupt = data[data['Data State'] == "Incorrect"]
+                data_correct = data[data['Data State'] == "Fine"]
 
                 with speed_tab:
 
