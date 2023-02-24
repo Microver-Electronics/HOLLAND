@@ -309,7 +309,8 @@ with dr42_tab:
 
                 data_first_dr42 = data_first_dr42.dropna(axis=1, how="all")
                 data_first_dr42 = data_first_dr42.style.applymap(corrupt_data_drs42, props='background-color:#800000;', subset=["Radar Message"])
-                st.dataframe(data_first_dr42, use_container_width=True)
+                #st.dataframe(data_first_dr42, use_container_width=True)
+                st.dataframe(data, use_container_width=True)
 
                 with rms_tab:
                     fine_x = [xi for xi, s in zip(data["Timestamp"], data["Data State"]) if s == "Fine"]
