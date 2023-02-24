@@ -43,6 +43,8 @@ holland_logo = Image.open('./images/holland.png')
 
 st.image(holland_logo, width=350)
 st.markdown("**_Deuta Radar Post-processing Tool_**")
+st.write('<p style="color:#8a8a8a;"><em>v 1.0.0</em></p>',
+unsafe_allow_html=True)
 
 
 def corrupt_data_drs05(v, props=''):
@@ -167,12 +169,9 @@ with drs05_tab:
 
                     st.plotly_chart(fig, use_container_width=True)
 
-                if (data_first_drs05["Unnamed: 2"].all()):
-                    data_first_drs05 = data_first_drs05.drop(["Unnamed: 2"], axis=1)
+                data_first_drs05 = data_first_drs05.dropna(axis=1, how="all")
 
                 data_first_drs05 = data_first_drs05.style.applymap(corrupt_data_drs05, props='background-color:#800000;', subset=["Radar Message"])
-
-
 
                 st.dataframe(data_first_drs05, use_container_width=True)
 
@@ -308,6 +307,7 @@ with dr42_tab:
 
                     st.plotly_chart(fig, use_container_width=True)
 
+                data_first_dr42 = data_first_dr42.dropna(axis=1, how="all")
                 data_first_dr42 = data_first_dr42.style.applymap(corrupt_data_drs42, props='background-color:#800000;', subset=["Radar Message"])
                 st.dataframe(data_first_dr42, use_container_width=True)
 
