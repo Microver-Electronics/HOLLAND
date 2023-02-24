@@ -386,7 +386,7 @@ with dr42_tab:
 
                     st.plotly_chart(fig, use_container_width=True)
 
-                data_first_dr42 = data_first_dr42.dropna(axis=1, how="all")
+                data = data.dropna(axis=1, how="all")
                 data_first_dr42 = data_first_dr42.style.applymap(corrupt_data_drs42, props='background-color:#800000;',
                                                                  subset=["Radar Message"])
                 st.dataframe(data, use_container_width=True)
