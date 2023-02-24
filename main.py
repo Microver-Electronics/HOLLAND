@@ -341,8 +341,8 @@ with dr42_tab:
 
                     fig.add_trace(go.Scatter(x=incorrect_x, y=incorrect_y, mode="markers", name="Incorrect",
                                              line=dict(color="red"), hoverinfo='text',
-                                             text=["Status Byte: {}<br>Speed: {}<br>Timestamp: {}".format(sb, speed, ts)
-                                                   for sb, speed, ts in
+                                             text=["Status Byte: {}<br>Distance: {}<br>Timestamp: {}".format(sb, distance, ts)
+                                                   for sb, distance, ts in
                                                    zip(data_corrupt["Status Byte"], data_corrupt["Distance"],
                                                        data_corrupt["Timestamp"])]))
 
@@ -374,8 +374,8 @@ with dr42_tab:
 
                     fig.add_trace(go.Scatter(x=incorrect_x, y=incorrect_y, mode="markers", name="Incorrect",
                                              line=dict(color="red"), hoverinfo='text',
-                                             text=["Status Byte: {}<br>Speed: {}<br>Timestamp: {}".format(sb, speed, ts)
-                                                   for sb, speed, ts in
+                                             text=["Status Byte: {}<br>RMS: {}<br>Timestamp: {}".format(sb, rms, ts)
+                                                   for sb, rms, ts in
                                                    zip(data_corrupt["Status Byte"], data_corrupt["RMS"],
                                                        data_corrupt["Timestamp"])]))
 
