@@ -103,7 +103,7 @@ with drs05_tab:
                 for j in list(data["Timestamp"].unique()):
                     for i in range(len(data.loc[data['Timestamp'] == j])):
                         time = data["Timestamp"][counter].split(" ")[3].split(":")
-                        split_second = 60 / (len(data.loc[data['Timestamp'] == j]) + i)
+                        split_second = 100 / (len(data.loc[data['Timestamp'] == j]) + i)
                         date = datetime.datetime(int(data["Timestamp"][counter].split(" ")[-1]),
                                                  2,
                                                  int(data["Timestamp"][counter].split(" ")[2]),
@@ -137,7 +137,7 @@ with drs05_tab:
 
 
                     fig = go.Figure()
-                    fig.add_trace(go.Scatter(x=fine_x, y=fine_y, mode="lines", name="Fine", hoverinfo='text', text=["Status Byte: {}<br>Speed: {}<br>Timestamp: {}".format(sb, speed, ts) for sb, speed, ts in zip(data_correct["Status Byte"], data_correct["Speed"], data_correct["Timestamp"])]))
+                    fig.add_trace(go.Scatter(x=fine_x, y=fine_y, mode="markers+lines", name="Fine", hoverinfo='text', text=["Status Byte: {}<br>Speed: {}<br>Timestamp: {}".format(sb, speed, ts) for sb, speed, ts in zip(data_correct["Status Byte"], data_correct["Speed"], data_correct["Timestamp"])]))
                     fig.add_trace(go.Scatter(x=incorrect_x, y=incorrect_y, mode="markers", name="Incorrect", line=dict(color="red"), hoverinfo='text', text=["Timestamp: {}<br>Radar Message: {}".format(tm, rm) for tm, rm in zip(data_corrupt["Timestamp"], data_corrupt["Radar Message"])]))
 
                     fig.update_layout(
@@ -153,7 +153,7 @@ with drs05_tab:
                     incorrect_y = [yi for yi, s in zip(data["Distance"], data["Data State"]) if s == "Incorrect"]
 
                     fig = go.Figure()
-                    fig.add_trace(go.Scatter(x=fine_x, y=fine_y, mode="lines", name="Fine", hoverinfo='text',
+                    fig.add_trace(go.Scatter(x=fine_x, y=fine_y, mode="markers+lines", name="Fine", hoverinfo='text',
                                              text=["Status Byte: {}<br>Distance: {}<br>Timestamp: {}".format(sb, speed, ts) for
                                                    sb, speed, ts in zip(data_correct["Status Byte"], data_correct["Distance"],
                                                                         data_correct["Timestamp"])]))
@@ -235,7 +235,7 @@ with dr42_tab:
                 for j in list(data["Timestamp"].unique()):
                     for i in range(len(data.loc[data['Timestamp'] == j])):
                         time = data["Timestamp"][counter].split(" ")[3].split(":")
-                        split_second = 60 / (len(data.loc[data['Timestamp'] == j]) + i)
+                        split_second = 100 / (len(data.loc[data['Timestamp'] == j]) + i)
                         date = datetime.datetime(int(data["Timestamp"][counter].split(" ")[-1]),
                                                  2,
                                                  int(data["Timestamp"][counter].split(" ")[2]),
@@ -264,7 +264,7 @@ with dr42_tab:
                     incorrect_y = [yi for yi, s in zip(data["Speed"], data["Data State"]) if s == "Incorrect"]
 
                     fig = go.Figure()
-                    fig.add_trace(go.Scatter(x=fine_x, y=fine_y, mode="lines", name="Fine", hoverinfo='text',
+                    fig.add_trace(go.Scatter(x=fine_x, y=fine_y, mode="markers+lines", name="Fine", hoverinfo='text',
                                              text=["Status Byte: {}<br>Speed: {}<br>Timestamp: {}".format(sb, speed, ts)
                                                    for sb, speed, ts in
                                                    zip(data_correct["Status Byte"], data_correct["Speed"],
@@ -287,7 +287,7 @@ with dr42_tab:
                     incorrect_y = [yi for yi, s in zip(data["Distance"], data["Data State"]) if s == "Incorrect"]
 
                     fig = go.Figure()
-                    fig.add_trace(go.Scatter(x=fine_x, y=fine_y, mode="lines", name="Fine", hoverinfo='text',
+                    fig.add_trace(go.Scatter(x=fine_x, y=fine_y, mode="markers+lines", name="Fine", hoverinfo='text',
                                              text=["Status Byte: {}<br>Distance: {}<br>Timestamp: {}".format(sb, speed,
                                                                                                              ts) for
                                                    sb, speed, ts in
@@ -318,7 +318,7 @@ with dr42_tab:
                     incorrect_y = [yi for yi, s in zip(data["RMS"], data["Data State"]) if s == "Incorrect"]
 
                     fig = go.Figure()
-                    fig.add_trace(go.Scatter(x=fine_x, y=fine_y, mode="lines", name="Fine", hoverinfo='text',
+                    fig.add_trace(go.Scatter(x=fine_x, y=fine_y, mode="markers+lines", name="Fine", hoverinfo='text',
                                              text=["Status Byte: {}<br>RMS: {}<br>Timestamp: {}".format(sb, rms, ts)
                                                    for sb, rms, ts in
                                                    zip(data_correct["Status Byte"], (data_correct["RMS"]),
