@@ -306,12 +306,12 @@ with dr42_tab:
                     #                          line=dict(color="red"), hoverinfo='text',
                     #                          text=["Timestamp: {}<br>Radar Message: {}".format(tm, rm) for tm, rm in
                     #                                zip(data_corrupt["Timestamp"], data_corrupt["Radar Message"])]))
-                    fig.add_trace(go.Scatter(x=incorrect_x, y=incorrect_y, mode="markers", name="Invalid",
+                    fig.add_trace(go.Scatter(x=incorrect_x, y=incorrect_y, mode="markers", name="Incorrect",
                                              line=dict(color="red"), hoverinfo='text',
                                              text=["Status Byte: {}<br>Speed: {}<br>Timestamp: {}".format(sb, speed, ts)
                                                    for sb, speed, ts in
-                                                   zip(data_correct["Status Byte"], data_correct["Speed"],
-                                                       data_correct["Timestamp"])]))
+                                                   zip(data_corrupt["Status Byte"], data_corrupt["Speed"],
+                                                       data_corrupt["Timestamp"])]))
 
                     fig.update_layout(
                         xaxis_title='Date',
@@ -339,12 +339,12 @@ with dr42_tab:
                     #                text=["Timestamp: {}<br>Radar Message: {}".format(tm, rm) for tm, rm in
                     #                      zip(data_corrupt["Timestamp"], data_corrupt["Radar Message"])]))
 
-                    fig.add_trace(go.Scatter(x=incorrect_x, y=incorrect_y, mode="markers", name="Invalid",
+                    fig.add_trace(go.Scatter(x=incorrect_x, y=incorrect_y, mode="markers", name="Incorrect",
                                              line=dict(color="red"), hoverinfo='text',
                                              text=["Status Byte: {}<br>Speed: {}<br>Timestamp: {}".format(sb, speed, ts)
                                                    for sb, speed, ts in
-                                                   zip(data_correct["Status Byte"], data_correct["Distance"],
-                                                       data_correct["Timestamp"])]))
+                                                   zip(data_corrupt["Status Byte"], data_corrupt["Distance"],
+                                                       data_corrupt["Timestamp"])]))
 
                     fig.update_layout(
                         xaxis_title='Date',
@@ -372,12 +372,12 @@ with dr42_tab:
                     #                          text=["Timestamp: {}<br>Radar Message: {}".format(tm, rm) for tm, rm in
                     #                                zip(data_corrupt["Timestamp"], data_corrupt["Radar Message"])]))
 
-                    fig.add_trace(go.Scatter(x=incorrect_x, y=incorrect_y, mode="markers", name="Invalid",
+                    fig.add_trace(go.Scatter(x=incorrect_x, y=incorrect_y, mode="markers", name="Incorrect",
                                              line=dict(color="red"), hoverinfo='text',
                                              text=["Status Byte: {}<br>Speed: {}<br>Timestamp: {}".format(sb, speed, ts)
                                                    for sb, speed, ts in
-                                                   zip(data_correct["Status Byte"], data_correct["RMS"],
-                                                       data_correct["Timestamp"])]))
+                                                   zip(data_corrupt["Status Byte"], data_corrupt["RMS"],
+                                                       data_corrupt["Timestamp"])]))
 
                     fig.update_layout(
                         xaxis_title='Date',
