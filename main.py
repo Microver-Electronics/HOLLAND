@@ -45,7 +45,7 @@ holland_logo = Image.open('./images/holland.png')
 
 st.image(holland_logo, width=350)
 st.markdown("**_Deuta Radar Post-processing Tool_**")
-st.write('<p style="color:#8a8a8a;"><em>v 1.0.2</em></p>',
+st.write('<p style="color:#8a8a8a;"><em>v 1.0.3</em></p>',
 unsafe_allow_html=True)
 
 
@@ -200,6 +200,7 @@ with dr42_tab:
                 data_first_dr42 = data.copy()
                 st.write("filename:", uploaded_file_dr42.name)
 
+                data["Sequential"] = 0
                 data["Speed"] = 0
                 data["Distance"] = 0
                 data["Status Byte"] = 0
@@ -245,6 +246,8 @@ with dr42_tab:
                         rms = int(rms, base=16)
 
                         data["RMS"][i] = rms
+
+                        data["Sequential"][i] = data["Radar Message"][i][2:4]
                     except:
                         pass
 
