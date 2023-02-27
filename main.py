@@ -74,7 +74,7 @@ with drs05_tab:
                 data["Speed"] = 0
                 data["Distance"] = 0
                 data["Status Byte"] = 0
-                data["Data State"] = "Fine"
+                data["Data State"] = "Valid"
 
                 for i in range(len(data)):
                     try:
@@ -126,7 +126,7 @@ with drs05_tab:
 
                 speed_tab, distance_tab = st.tabs(["Speed Over Time", "Distance Over Time"])
 
-                data.loc[data['Radar Message'].str.len() != 26, 'Data State'] = 'Incorrect'
+                data.loc[data['Radar Message'].str.len() != 26, 'Data State'] = 'Invalid'
                 data_corrupt = data[data['Radar Message'].str.len() != 26]
                 data_correct = data[data['Radar Message'].str.len() == 26]
 
@@ -134,15 +134,15 @@ with drs05_tab:
 
 
                 with speed_tab:
-                    fine_x = [xi for xi, s in zip(data["Timestamp"], data["Data State"]) if s == "Fine"]
-                    fine_y = [yi for yi, s in zip(data["Speed"], data["Data State"]) if s == "Fine"]
-                    incorrect_x = [xi for xi, s in zip(data["Timestamp"], data["Data State"]) if s == "Incorrect"]
-                    incorrect_y = [yi for yi, s in zip(data["Speed"], data["Data State"]) if s == "Incorrect"]
+                    fine_x = [xi for xi, s in zip(data["Timestamp"], data["Data State"]) if s == "Valid"]
+                    fine_y = [yi for yi, s in zip(data["Speed"], data["Data State"]) if s == "Valid"]
+                    incorrect_x = [xi for xi, s in zip(data["Timestamp"], data["Data State"]) if s == "Invalid"]
+                    incorrect_y = [yi for yi, s in zip(data["Speed"], data["Data State"]) if s == "Invalid"]
 
 
                     fig = go.Figure()
-                    fig.add_trace(go.Scatter(x=fine_x, y=fine_y, mode="markers+lines", name="Fine", hoverinfo='text', text=["Status Byte: {}<br>Speed: {}<br>Timestamp: {}".format(sb, speed, ts) for sb, speed, ts in zip(data_correct["Status Byte"], data_correct["Speed"], data_correct["Timestamp"])]))
-                    fig.add_trace(go.Scatter(x=incorrect_x, y=incorrect_y, mode="markers", name="Incorrect", line=dict(color="red"), hoverinfo='text', text=["Timestamp: {}<br>Radar Message: {}".format(tm, rm) for tm, rm in zip(data_corrupt["Timestamp"], data_corrupt["Radar Message"])]))
+                    fig.add_trace(go.Scatter(x=fine_x, y=fine_y, mode="markers+lines", name="Valid", hoverinfo='text', text=["Status Byte: {}<br>Speed: {}<br>Timestamp: {}".format(sb, speed, ts) for sb, speed, ts in zip(data_correct["Status Byte"], data_correct["Speed"], data_correct["Timestamp"])]))
+                    fig.add_trace(go.Scatter(x=incorrect_x, y=incorrect_y, mode="markers", name="Invalid", line=dict(color="red"), hoverinfo='text', text=["Timestamp: {}<br>Radar Message: {}".format(tm, rm) for tm, rm in zip(data_corrupt["Timestamp"], data_corrupt["Radar Message"])]))
 
                     fig.update_layout(
                         xaxis_title='Date',
@@ -151,18 +151,18 @@ with drs05_tab:
 
                     st.plotly_chart(fig, use_container_width=True)
                 with distance_tab:
-                    fine_x = [xi for xi, s in zip(data["Timestamp"], data["Data State"]) if s == "Fine"]
-                    fine_y = [yi for yi, s in zip(data["Distance"], data["Data State"]) if s == "Fine"]
-                    incorrect_x = [xi for xi, s in zip(data["Timestamp"], data["Data State"]) if s == "Incorrect"]
-                    incorrect_y = [yi for yi, s in zip(data["Distance"], data["Data State"]) if s == "Incorrect"]
+                    fine_x = [xi for xi, s in zip(data["Timestamp"], data["Data State"]) if s == "Valid"]
+                    fine_y = [yi for yi, s in zip(data["Distance"], data["Data State"]) if s == "Valid"]
+                    incorrect_x = [xi for xi, s in zip(data["Timestamp"], data["Data State"]) if s == "Invalid"]
+                    incorrect_y = [yi for yi, s in zip(data["Distance"], data["Data State"]) if s == "Invalid"]
 
                     fig = go.Figure()
-                    fig.add_trace(go.Scatter(x=fine_x, y=fine_y, mode="markers+lines", name="Fine", hoverinfo='text',
+                    fig.add_trace(go.Scatter(x=fine_x, y=fine_y, mode="markers+lines", name="Valid", hoverinfo='text',
                                              text=["Status Byte: {}<br>Distance: {}<br>Timestamp: {}".format(sb, speed, ts) for
                                                    sb, speed, ts in zip(data_correct["Status Byte"], data_correct["Distance"],
                                                                         data_correct["Timestamp"])]))
                     fig.add_trace(
-                        go.Scatter(x=incorrect_x, y=incorrect_y, mode="markers", name="Incorrect", line=dict(color="red"),
+                        go.Scatter(x=incorrect_x, y=incorrect_y, mode="markers", name="Invalid", line=dict(color="red"),
                                    hoverinfo='text', text=["Timestamp: {}<br>Radar Message: {}".format(tm, rm) for tm, rm in
                                                            zip(data_corrupt["Timestamp"], data_corrupt["Radar Message"])]))
 
@@ -205,7 +205,7 @@ with dr42_tab:
                 data["Distance"] = 0
                 data["Status Byte"] = 0
                 data["RMS"] = 0
-                data["Data State"] = "Fine"
+                data["Data State"] = "Valid"
                 data["Masked Status Byte"] = 0
 
                 for i in range(len(data)):
@@ -273,16 +273,16 @@ with dr42_tab:
 
                 speed_tab, distance_tab, rms_tab = st.tabs(["Speed Over Time", "Distance Over Time", "RMS"])
 
-                data.loc[(data['Radar Message'].str.len() != 27) | (data['Masked Status Byte'] == 0), 'Data State'] = 'Incorrect'
-                data_corrupt = data[data['Data State'] == "Incorrect"]
-                data_correct = data[data['Data State'] == "Fine"]
+                data.loc[(data['Radar Message'].str.len() != 27) | (data['Masked Status Byte'] == 0), 'Data State'] = 'Invalid'
+                data_corrupt = data[data['Data State'] == "Invalid"]
+                data_correct = data[data['Data State'] == "Valid"]
 
                 with speed_tab:
 
-                    fine_x = [xi for xi, s in zip(data["Timestamp"], data["Data State"]) if s == "Fine"]
-                    fine_y = [yi for yi, s in zip(data["Speed"], data["Data State"]) if s == "Fine"]
-                    incorrect_x = [xi for xi, s in zip(data["Timestamp"], data["Data State"]) if s == "Incorrect"]
-                    incorrect_y = [yi for yi, s in zip(data["Speed"], data["Data State"]) if s == "Incorrect"]
+                    fine_x = [xi for xi, s in zip(data["Timestamp"], data["Data State"]) if s == "Valid"]
+                    fine_y = [yi for yi, s in zip(data["Speed"], data["Data State"]) if s == "Valid"]
+                    incorrect_x = [xi for xi, s in zip(data["Timestamp"], data["Data State"]) if s == "Invalid"]
+                    incorrect_y = [yi for yi, s in zip(data["Speed"], data["Data State"]) if s == "Invalid"]
 
                     fig = go.Figure()
                     fig.add_trace(go.Scatter(x=fine_x, y=fine_y, mode="markers+lines", name="Valid", hoverinfo='text',
@@ -294,7 +294,7 @@ with dr42_tab:
                     #                          line=dict(color="red"), hoverinfo='text',
                     #                          text=["Timestamp: {}<br>Radar Message: {}".format(tm, rm) for tm, rm in
                     #                                zip(data_corrupt["Timestamp"], data_corrupt["Radar Message"])]))
-                    fig.add_trace(go.Scatter(x=incorrect_x, y=incorrect_y, mode="markers", name="Incorrect",
+                    fig.add_trace(go.Scatter(x=incorrect_x, y=incorrect_y, mode="markers", name="Invalid",
                                              line=dict(color="red"), hoverinfo='text',
                                              text=["Status Byte: {}<br>Speed: {}<br>Timestamp: {}".format(sb, speed, ts)
                                                    for sb, speed, ts in
@@ -308,10 +308,10 @@ with dr42_tab:
 
                     st.plotly_chart(fig, use_container_width=True)
                 with distance_tab:
-                    fine_x = [xi for xi, s in zip(data["Timestamp"], data["Data State"]) if s == "Fine"]
-                    fine_y = [yi for yi, s in zip(data["Distance"], data["Data State"]) if s == "Fine"]
-                    incorrect_x = [xi for xi, s in zip(data["Timestamp"], data["Data State"]) if s == "Incorrect"]
-                    incorrect_y = [yi for yi, s in zip(data["Distance"], data["Data State"]) if s == "Incorrect"]
+                    fine_x = [xi for xi, s in zip(data["Timestamp"], data["Data State"]) if s == "Valid"]
+                    fine_y = [yi for yi, s in zip(data["Distance"], data["Data State"]) if s == "Valid"]
+                    incorrect_x = [xi for xi, s in zip(data["Timestamp"], data["Data State"]) if s == "Invalid"]
+                    incorrect_y = [yi for yi, s in zip(data["Distance"], data["Data State"]) if s == "Invalid"]
 
                     fig = go.Figure()
                     fig.add_trace(go.Scatter(x=fine_x, y=fine_y, mode="markers+lines", name="Valid", hoverinfo='text',
@@ -327,7 +327,7 @@ with dr42_tab:
                     #                text=["Timestamp: {}<br>Radar Message: {}".format(tm, rm) for tm, rm in
                     #                      zip(data_corrupt["Timestamp"], data_corrupt["Radar Message"])]))
 
-                    fig.add_trace(go.Scatter(x=incorrect_x, y=incorrect_y, mode="markers", name="Incorrect",
+                    fig.add_trace(go.Scatter(x=incorrect_x, y=incorrect_y, mode="markers", name="Invalid",
                                              line=dict(color="red"), hoverinfo='text',
                                              text=["Status Byte: {}<br>Distance: {}<br>Timestamp: {}".format(sb, distance, ts)
                                                    for sb, distance, ts in
@@ -344,10 +344,10 @@ with dr42_tab:
 
 
                 with rms_tab:
-                    fine_x = [xi for xi, s in zip(data["Timestamp"], data["Data State"]) if s == "Fine"]
-                    fine_y = [yi for yi, s in zip(data["RMS"], data["Data State"]) if s == "Fine"]
-                    incorrect_x = [xi for xi, s in zip(data["Timestamp"], data["Data State"]) if s == "Incorrect"]
-                    incorrect_y = [yi for yi, s in zip(data["RMS"], data["Data State"]) if s == "Incorrect"]
+                    fine_x = [xi for xi, s in zip(data["Timestamp"], data["Data State"]) if s == "Valid"]
+                    fine_y = [yi for yi, s in zip(data["RMS"], data["Data State"]) if s == "Valid"]
+                    incorrect_x = [xi for xi, s in zip(data["Timestamp"], data["Data State"]) if s == "Invalid"]
+                    incorrect_y = [yi for yi, s in zip(data["RMS"], data["Data State"]) if s == "Invalid"]
 
                     fig = go.Figure()
                     fig.add_trace(go.Scatter(x=fine_x, y=fine_y, mode="markers+lines", name="Valid", hoverinfo='text',
@@ -360,7 +360,7 @@ with dr42_tab:
                     #                          text=["Timestamp: {}<br>Radar Message: {}".format(tm, rm) for tm, rm in
                     #                                zip(data_corrupt["Timestamp"], data_corrupt["Radar Message"])]))
 
-                    fig.add_trace(go.Scatter(x=incorrect_x, y=incorrect_y, mode="markers", name="Incorrect",
+                    fig.add_trace(go.Scatter(x=incorrect_x, y=incorrect_y, mode="markers", name="Invalid",
                                              line=dict(color="red"), hoverinfo='text',
                                              text=["Status Byte: {}<br>RMS: {}<br>Timestamp: {}".format(sb, rms, ts)
                                                    for sb, rms, ts in
@@ -375,6 +375,7 @@ with dr42_tab:
                     st.plotly_chart(fig, use_container_width=True)
 
                 data = data.dropna(axis=1, how="all")
+                data = data.drop(["Masked Status Byte"], axis=1)
                 data_first_dr42 = data_first_dr42.style.applymap(corrupt_data_drs42, props='background-color:#800000;',
                                                                  subset=["Radar Message"])
                 st.dataframe(data, use_container_width=True)
