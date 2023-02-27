@@ -450,7 +450,7 @@ with dr42_tab:
                         ),
 
                         layers=[pdk.Layer('ScatterplotLayer', data=chart_data, get_position='[lon, lat]',
-                                          get_color='[20, 190, 241, 180]', get_radius=1,
+                                          get_color='[20, 190, 241, 180]', get_radius=0.5,
                                           pickable=True, auto_highlight=True,
                                           ), ],
                         tooltip={
