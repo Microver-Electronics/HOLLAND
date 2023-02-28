@@ -9,6 +9,10 @@ import math
 from streamlit.components.v1 import html
 import plotly.graph_objects as go
 import pydeck as pdk
+import os
+from datetime import timedelta
+from datetime import datetime as dt
+import time
 
 st.set_page_config(layout="wide")
 st.markdown("<div id='linkto_top'></div>", unsafe_allow_html=True)
@@ -45,7 +49,7 @@ holland_logo = Image.open('./images/holland.png')
 
 st.image(holland_logo, width=350)
 st.markdown("**_Deuta Radar Post-processing Tool_**")
-st.write('<p style="color:#8a8a8a;"><em>v 1.0.3</em></p>',
+st.write('<p style="color:#8a8a8a;"><em>v 1.1.0</em></p>',
 unsafe_allow_html=True)
 
 
@@ -200,77 +204,6 @@ with dr42_tab:
                 data_first_dr42 = data.copy()
                 st.write("filename:", uploaded_file_dr42.name)
 
-                data["Sequential"] = 0
-                data["Speed"] = 0
-                data["Distance"] = 0
-                data["Status Byte"] = 0
-                data["RMS"] = 0
-                data["Data State"] = "Valid"
-                data["Masked Status Byte"] = 0
-
-                for i in range(len(data)):
-                    try:
-                        speed = data["Radar Message"][i][5:9]
-                        speed = int(speed, base=16)
-
-                        speed = (speed * 600) / 65535
-
-                        data["Speed"][i] = speed
-
-                        distance_counter = data["Radar Message"][i][9:13]
-                        distance_counter = int(distance_counter, base=16)
-                        distance_counter = distance_counter / 10
-                        data["Distance"][i] = distance_counter
-
-                        status_byte = data["Radar Message"][i][23:25]
-                        ini_string = status_byte
-                        n = int(ini_string, 16)
-                        bStr = ''
-                        while n > 0:
-                            bStr = str(n % 2) + bStr
-                            n = n >> 1
-                        res = bStr
-
-                        data["Status Byte"][i] = "0x" + data["Radar Message"][i][23:25] + ", " + "0b" + res
-
-                        hex_string = data["Radar Message"][i][23:25]
-                        hex_value = int(hex_string, 16)
-                        binary_value = bin(hex_value)[2:]
-                        mask = 0x02
-                        masked_value = int(binary_value, 2) & mask
-                        decimal_value = int(str(masked_value), 10)
-                        print(str(hex_string) + " " + str(decimal_value))
-                        data["Masked Status Byte"][i] = decimal_value
-
-                        rms = data["Radar Message"][i][17:21]
-                        rms = int(rms, base=16)
-
-                        data["RMS"][i] = rms
-
-                        data["Sequential"][i] = data["Radar Message"][i][2:4]
-                    except:
-                        pass
-
-                counter = 0
-
-                for j in list(data["Timestamp"].unique()):
-                    for i in range(len(data.loc[data['Timestamp'] == j])):
-                        time = data["Timestamp"][counter].split(" ")[3].split(":")
-                        split_second = 100 / (len(data.loc[data['Timestamp'] == j]) + i)
-                        date = datetime.datetime(int(data["Timestamp"][counter].split(" ")[-1]),
-                                                 2,
-                                                 int(data["Timestamp"][counter].split(" ")[2]),
-                                                 int(time[0]),
-                                                 int(time[1]),
-                                                 int(time[2]),
-                                                 int((split_second * 10000) * i))
-
-                        data["Timestamp"][counter] = date
-
-                        counter += 1
-
-
-
                 speed_tab, distance_tab, rms_tab, map_tab = st.tabs(["Speed Over Time", "Distance Over Time", "RMS", "Map"])
                 
                 data.loc[(data['Radar Message'].str.len() != 27) | (data['Masked Status Byte'] == 0), 'Data State'] = 'Invalid'
@@ -290,10 +223,7 @@ with dr42_tab:
                                                    for sb, speed, ts in
                                                    zip(data_correct["Status Byte"], data_correct["Speed"],
                                                        data_correct["Timestamp"])]))
-                    # fig.add_trace(go.Scatter(x=incorrect_x, y=incorrect_y, mode="markers", name="Incorrect",
-                    #                          line=dict(color="red"), hoverinfo='text',
-                    #                          text=["Timestamp: {}<br>Radar Message: {}".format(tm, rm) for tm, rm in
-                    #                                zip(data_corrupt["Timestamp"], data_corrupt["Radar Message"])]))
+
                     fig.add_trace(go.Scatter(x=incorrect_x, y=incorrect_y, mode="markers", name="Invalid",
                                              line=dict(color="red"), hoverinfo='text',
                                              text=["Status Byte: {}<br>Speed: {}<br>Timestamp: {}".format(sb, speed, ts)
@@ -320,12 +250,6 @@ with dr42_tab:
                                                    sb, speed, ts in
                                                    zip(data_correct["Status Byte"], data_correct["Distance"],
                                                        data_correct["Timestamp"])]))
-                    # fig.add_trace(
-                    #     go.Scatter(x=incorrect_x, y=incorrect_y, mode="markers", name="Incorrect",
-                    #                line=dict(color="red"),
-                    #                hoverinfo='text',
-                    #                text=["Timestamp: {}<br>Radar Message: {}".format(tm, rm) for tm, rm in
-                    #                      zip(data_corrupt["Timestamp"], data_corrupt["Radar Message"])]))
 
                     fig.add_trace(go.Scatter(x=incorrect_x, y=incorrect_y, mode="markers", name="Invalid",
                                              line=dict(color="red"), hoverinfo='text',
@@ -355,10 +279,6 @@ with dr42_tab:
                                                    for sb, rms, ts in
                                                    zip(data_correct["Status Byte"], (data_correct["RMS"]),
                                                        data_correct["Timestamp"])]))
-                    # fig.add_trace(go.Scatter(x=incorrect_x, y=incorrect_y, mode="markers", name="Incorrect",
-                    #                          line=dict(color="red"), hoverinfo='text',
-                    #                          text=["Timestamp: {}<br>Radar Message: {}".format(tm, rm) for tm, rm in
-                    #                                zip(data_corrupt["Timestamp"], data_corrupt["Radar Message"])]))
 
                     fig.add_trace(go.Scatter(x=incorrect_x, y=incorrect_y, mode="markers", name="Invalid",
                                              line=dict(color="red"), hoverinfo='text',
@@ -375,86 +295,34 @@ with dr42_tab:
                     st.plotly_chart(fig, use_container_width=True)
 
                 with map_tab:
-                    chart_data = pd.DataFrame(
-                        [[30.311381667, -81.654926667],
-                         [30.311375, -81.654916667],
-                         [30.311368333, -81.654906667],
-                         [30.311361667, -81.654896667],
-                         [30.311355, -81.654886667],
-                         [30.31134, -81.654861667],
-                         [30.311333333, -81.65485],
-                         [30.311326667, -81.65484],
-                         [30.31132, -81.654828333],
-                         [30.311313333, -81.654818333],
-                         [30.311306667, -81.654806667],
-                         [30.3113, -81.654796667],
-                         [30.311295, -81.654786667],
-                         [30.311288333, -81.654776667],
-                         [30.311281667, -81.654765],
-                         [30.311275, -81.654755],
-                         [30.311268333, -81.654745],
-                         [30.311263333, -81.654735],
-                         [30.311256667, -81.654723333],
-                         [30.31125, -81.654715],
-                         [30.311243333, -81.654705],
-                         [30.311236667, -81.654695],
-                         [30.31123, -81.654685],
-                         [30.311223333, -81.654673333],
-                         [30.311216667, -81.654663333],
-                         [30.311211667, -81.654653333],
-                         [30.311205, -81.654643333],
-                         [30.311198333, -81.654633333],
-                         [30.311193333, -81.654623333],
-                         [30.311186667, -81.654611667],
-                         [30.31118, -81.654601667],
-                         [30.311173333, -81.654591667],
-                         [30.311168333, -81.654581667],
-                         [30.311161667, -81.654571667],
-                         [30.311155, -81.654561667],
-                         [30.31115, -81.654551667],
-                         [30.311143333, -81.654541667],
-                         [30.311138333, -81.654531667],
-                         [30.311131667, -81.654521667],
-                         [30.311126667, -81.654511667],
-                         [30.31112, -81.654503333],
-                         [30.311115, -81.654493333],
-                         [30.31111, -81.654483333],
-                         [30.311105, -81.654475],
-                         [30.311098333, -81.654465],
-                         [30.311093333, -81.654456667],
-                         [30.311088333, -81.654446667],
-                         [30.311081667, -81.654438333],
-                         [30.311076667, -81.654428333],
-                         [30.311071667, -81.654418333],
-                         [30.311065, -81.65441],
-                         [30.31106, -81.6544],
-                         [30.311053333, -81.65439],
-                         [30.311048333, -81.65438],
-                         [30.311041667, -81.65437],
-                         [30.311036667, -81.654361667],
-                         [30.310946667, -81.65421],
-                         [30.310941667, -81.654201667],
-                         [30.310935, -81.654191667],
-                         [30.31093, -81.654183333],
-                         [30.310925, -81.654175],
-                         [30.31092, -81.654166667]],
-                        columns=['lat', 'lon'])
+                    chart_data = pd.DataFrame(data[["Latitude", "Longitude", "Data State"]].values.tolist(),
+                                              columns=['lat', 'lon', 'ds'])
+                    valid_data = chart_data[chart_data['ds'] == 'Valid']
+                    valid_data = valid_data.dropna()
+
+                    invalid_data = chart_data[chart_data['ds'] == 'Invalid']
+                    invalid_data = invalid_data.dropna()
 
                     st.pydeck_chart(pdk.Deck(
                             map_provider="mapbox",
                             map_style="satellite",
                             initial_view_state=pdk.ViewState(
-                            latitude=30.311381667,
-                            longitude=-81.654926667,
+                            latitude=data[["Latitude", "Longitude"]].values.tolist()[0][0],
+                            longitude=data[["Latitude", "Longitude"]].values.tolist()[0][1],
                             zoom=19,
                         ),
 
-                        layers=[pdk.Layer('ScatterplotLayer', data=chart_data, get_position='[lon, lat]',
+                        layers=[pdk.Layer('ScatterplotLayer', data=valid_data, get_position='[lon, lat]',
                                           get_color='[20, 190, 241]', get_radius=0.5,
                                           pickable=True, auto_highlight=True,
-                                          ), ],
+                                          ),
+                                pdk.Layer('ScatterplotLayer', data=invalid_data, get_position='[lon, lat]',
+                                          get_color='[255, 0, 0]', get_radius=0.5,
+                                          pickable=True, auto_highlight=True,
+                                          )
+                                ],
                         tooltip={
-                            'html': '<b>Speed:</b> ### <br> <b>Distance:</b> ### <br> <b>RMS:</b> ### <br>',
+                            'html': '<b>Speed:</b> {{Speed}} <br> <b>Distance:</b> {{Speed}} <br> <b>RMS:</b> {{Speed}} <br>',
                             'style': {
                                 'color': 'white'
                             }
