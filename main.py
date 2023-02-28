@@ -330,7 +330,7 @@ with dr42_tab:
                     ))
 
                 data = data.dropna(axis=1, how="all")
-                data = data.drop(["Masked Status Byte"], axis=1)
+                data = data.drop(["Masked Status Byte", "AVG Speed", "AVG Distance", "AVG RMS"], axis=1)
                 data_first_dr42 = data_first_dr42.style.applymap(corrupt_data_drs42, props='background-color:#800000;',
                                                                  subset=["Radar Message"])
                 st.dataframe(data, use_container_width=True)
