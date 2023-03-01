@@ -295,8 +295,8 @@ with dr42_tab:
                     st.plotly_chart(fig, use_container_width=True)
 
                 with map_tab:
-                    chart_data = pd.DataFrame(data[["Latitude", "Longitude", "Data State"]].values.tolist(),
-                                              columns=['lat', 'lon', 'ds'])
+                    chart_data = pd.DataFrame(data[["Latitude", "Longitude", "Data State", "Status Byte", "Speed", "Distance", "RMS"]].values.tolist(),
+                                              columns=['lat', 'lon', 'ds', 'sb', 's', 'd', 'rms'])
                     valid_data = chart_data[chart_data['ds'] == 'Valid']
                     valid_data = valid_data.dropna()
 
@@ -322,7 +322,7 @@ with dr42_tab:
                                           )
                                 ],
                         tooltip={
-                            'html': '<b>Speed:</b> {{Speed}} <br> <b>Distance:</b> {{Speed}} <br> <b>RMS:</b> {{Speed}} <br>',
+                            'html': '<b>Speed:</b> {s} <br> <b>Distance:</b> {d} <br> <b>RMS:</b> {rms} <br> <b>Status Byte:</b> {sb} <br> <b>Data State:</b> {ds} <br>',
                             'style': {
                                 'color': 'white'
                             }
@@ -330,7 +330,7 @@ with dr42_tab:
                     ))
 
                 data = data.dropna(axis=1, how="all")
-                data = data.drop(["Masked Status Byte", "AVG Speed", "AVG Distance", "AVG RMS"], axis=1)
+                data = data.drop(["Masked Status Byte"], axis=1)
                 data_first_dr42 = data_first_dr42.style.applymap(corrupt_data_drs42, props='background-color:#800000;',
                                                                  subset=["Radar Message"])
                 st.dataframe(data, use_container_width=True)
