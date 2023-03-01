@@ -49,7 +49,7 @@ holland_logo = Image.open('./images/holland.png')
 
 st.image(holland_logo, width=350)
 st.markdown("**_Deuta Radar Post-processing Tool_**")
-st.write('<p style="color:#8a8a8a;"><em>v 1.1.1</em></p>',
+st.write('<p style="color:#8a8a8a;"><em>v 1.1.2</em></p>',
 unsafe_allow_html=True)
 
 
@@ -295,40 +295,46 @@ with dr42_tab:
                     st.plotly_chart(fig, use_container_width=True)
 
                 with map_tab:
-                    chart_data = pd.DataFrame(data[["Latitude", "Longitude", "Data State", "Status Byte", "Speed", "Distance", "RMS"]].values.tolist(),
-                                              columns=['lat', 'lon', 'ds', 'sb', 's', 'd', 'rms'])
-                    valid_data = chart_data[chart_data['ds'] == 'Valid']
-                    valid_data = valid_data.dropna()
+                    try:
+                        chart_data = pd.DataFrame(data[["Latitude", "Longitude", "Data State", "Status Byte", "Speed", "Distance", "RMS"]].values.tolist(),
+                                                  columns=['lat', 'lon', 'ds', 'sb', 's', 'd', 'rms'])
+                        valid_data = chart_data[chart_data['ds'] == 'Valid']
+                        valid_data = valid_data.dropna()
+                        valid_data = valid_data.reset_index(drop=True)
 
-                    invalid_data = chart_data[chart_data['ds'] == 'Invalid']
-                    invalid_data = invalid_data.dropna()
+                        invalid_data = chart_data[chart_data['ds'] == 'Invalid']
+                        invalid_data = invalid_data.dropna()
+                        invalid_data = invalid_data.reset_index(drop=True)
 
-                    st.pydeck_chart(pdk.Deck(
-                            map_provider="mapbox",
-                            map_style="satellite",
-                            initial_view_state=pdk.ViewState(
-                            latitude=data[["Latitude", "Longitude"]].values.tolist()[0][0],
-                            longitude=data[["Latitude", "Longitude"]].values.tolist()[0][1],
-                            zoom=19,
-                        ),
+                        st.pydeck_chart(pdk.Deck(
+                                map_provider="mapbox",
+                                map_style="satellite",
+                                initial_view_state=pdk.ViewState(
+                                latitude=valid_data["lat"][0],
+                                longitude=valid_data["lon"][0],
+                                zoom=19,
+                            ),
 
-                        layers=[pdk.Layer('ScatterplotLayer', data=valid_data, get_position='[lon, lat]',
-                                          get_color='[20, 190, 241]', get_radius=0.5,
-                                          pickable=True, auto_highlight=True,
-                                          ),
-                                pdk.Layer('ScatterplotLayer', data=invalid_data, get_position='[lon, lat]',
-                                          get_color='[255, 0, 0]', get_radius=0.5,
-                                          pickable=True, auto_highlight=True,
-                                          )
-                                ],
-                        tooltip={
-                            'html': '<b>Speed:</b> {s} <br> <b>Distance:</b> {d} <br> <b>RMS:</b> {rms} <br> <b>Status Byte:</b> {sb} <br> <b>Data State:</b> {ds} <br>',
-                            'style': {
-                                'color': 'white'
+                            layers=[pdk.Layer('ScatterplotLayer', data=valid_data, get_position='[lon, lat]',
+                                              get_color='[20, 190, 241]', get_radius=0.5,
+                                              pickable=True, auto_highlight=True,
+                                              ),
+                                    pdk.Layer('ScatterplotLayer', data=invalid_data, get_position='[lon, lat]',
+                                              get_color='[255, 0, 0]', get_radius=0.5,
+                                              pickable=True, auto_highlight=True,
+                                              )
+                                    ],
+                            tooltip={
+                                'html': '<b>Speed:</b> {s} <br> <b>Distance:</b> {d} <br> <b>RMS:</b> {rms} <br> <b>Status Byte:</b> {sb} <br> <b>Data State:</b> {ds} <br>',
+                                'style': {
+                                    'color': 'white'
+                                }
                             }
-                        }
-                    ))
+                        ))
 
+                    except:
+                        st.write("No gps data was found for this csv.")
+                
                 data = data.dropna(axis=1, how="all")
                 data = data.drop(["Masked Status Byte"], axis=1)
                 data_first_dr42 = data_first_dr42.style.applymap(corrupt_data_drs42, props='background-color:#800000;',
