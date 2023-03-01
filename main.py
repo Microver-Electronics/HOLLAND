@@ -49,7 +49,7 @@ holland_logo = Image.open('./images/holland.png')
 
 st.image(holland_logo, width=350)
 st.markdown("**_Deuta Radar Post-processing Tool_**")
-st.write('<p style="color:#8a8a8a;"><em>v 1.1.0</em></p>',
+st.write('<p style="color:#8a8a8a;"><em>v 1.1.1</em></p>',
 unsafe_allow_html=True)
 
 
